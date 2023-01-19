@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">MyFooDApp</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="favourite">Favourite</string>
+    <string name="daily_meal">Daily Meal</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_cart">My Cart</string>
+    <string name="myrestaurant_gmail_com">MyRestaurant@gmail.com</string>
+    <string name="don_t_forget_to_leave_us_a_review_on">Do not forget to leave us a review on:</string>
+    <string name="log_out">Log Out</string>
+    <string name="pizza">Pizza</string>
+    <string name="proudct_name">Proudct Name</string>
+    <string name="min_45">Min - $45</string>
+    <string name="_10_00_23_00">10:00 - 23:00</string>
+    <string name="_10_weekend_delicious_ndinner_recipes">10 weekend Delicious \nRecipes</string>
+
+</resources>
