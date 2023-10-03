@@ -1,1 +1,2 @@
 # AndroidStudioFoodApp
+This application served as my initiation into the realm of Android app development. The project features a menu-based app with three distinct pages: the main page, the favorites page, and the daily meal page. Each page presents its content uniquely, contributing to the app's aesthetic appeal. The app includes various interactive elements, such as click events for items on the daily meal page, as well as both vertical and horizontal scrolling functionality. The most demanding aspect of this project was mastering the intricacies of scroll implementation.
