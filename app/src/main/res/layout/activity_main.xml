@@ -25,17 +25,7 @@
         android:background="@color/blueback"
         app:itemIconTint="@color/black"
         app:itemTextColor="@color/black"
-        >
-
-        <Button
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:padding="15dp"
-            android:text="@string/log_out"
-            android:textAllCaps="false" />
-    </com.google.android.material.navigation.NavigationView>
+        />
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

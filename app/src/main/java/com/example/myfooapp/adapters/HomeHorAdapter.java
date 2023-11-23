@@ -14,23 +14,65 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myfooapp.R;
+import com.example.myfooapp.models.DetailedDailyModel;
 import com.example.myfooapp.models.HomeHorModel;
 import com.example.myfooapp.models.HomeVerModel;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+import DBconnection.Queries;
 
 public class HomeHorAdapter extends RecyclerView.Adapter<HomeHorAdapter.ViewHolder> {
 
     UpdateVerticalRec updateVerticalRec;
     Activity activity;
     ArrayList<HomeHorModel> list;
+    List<DetailedDailyModel> meals = null;
+    ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
+    Context context = null;
 
     boolean check=true;
     boolean select=true;
     int row_index = -1;
 
-    public HomeHorAdapter(UpdateVerticalRec updateVerticalRec, Activity activity, ArrayList<HomeHorModel> list) {
+    public List<Integer> GetDrawablesList(int nrOfPictures, String nameOfPictures, String whereToSearch)  {
+
+        List<Integer> drawables = new ArrayList<>();
+        for(int i=1;i<=nrOfPictures;i++)
+            drawables.add(context.getResources().getIdentifier(nameOfPictures+i,whereToSearch,context.getPackageName()));
+
+        return drawables;
+    }
+
+    private void UpdateModelList(String type)
+    {
+        homeVerModels = new ArrayList<>();
+
+        List<DetailedDailyModel> mealsOfType;
+        List<Integer> picturesId;
+
+        mealsOfType= meals.stream()
+                .filter(meal -> type.equalsIgnoreCase(meal.getType()))
+                .collect(Collectors.toList());
+
+        picturesId = GetDrawablesList(mealsOfType.size(),type,"drawable");
+
+        int pictureNR=0;
+        for(int i=0; i<mealsOfType.size();i++) {
+            mealsOfType.get(i).setImage(picturesId.get(pictureNR++));
+            homeVerModels.add(new HomeVerModel(mealsOfType.get(i).getImage(),mealsOfType.get(i).getName(),mealsOfType.get(i).getTiming(),mealsOfType.get(i).getPrice()));
+        }
+    }
+
+
+    public HomeHorAdapter(Context context,UpdateVerticalRec updateVerticalRec, Activity activity, ArrayList<HomeHorModel> list) {
+        this.context = context;
         this.updateVerticalRec = updateVerticalRec;
         this.activity = activity;
         this.list = list;
@@ -58,13 +100,19 @@ public class HomeHorAdapter extends RecyclerView.Adapter<HomeHorAdapter.ViewHold
         holder.imageView.setImageResource(list.get(position).getImage());
         holder.name.setText(list.get(position).getName());
 
-        if(check) {
-            ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
-            homeVerModels.add(new HomeVerModel(R.drawable.pizza1, "Capriciosa", "10:00 - 23:00", "Min - $28"));
-            homeVerModels.add(new HomeVerModel(R.drawable.pizza2, "Quatro Stagioni", "10:00 - 23:00", "Min - $35"));
-            homeVerModels.add(new HomeVerModel(R.drawable.pizza3, "Pizza Casei", "10:00 - 23:00", "Min - $30"));
-            homeVerModels.add(new HomeVerModel(R.drawable.pizza4, "Prosciutto e Funghi", "10:00 - 23:00", "Min - $29"));
+        Queries queries = new Queries();
+        Future<Vector<DetailedDailyModel>> meals_future;
 
+        try {
+            meals_future = queries.GetDailyMeals();
+
+            meals = meals_future.get();
+        } catch (SQLException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(check) {
+            UpdateModelList("pizza");
             updateVerticalRec.callBack(position, homeVerModels);
             check = false;
         }
@@ -76,52 +124,28 @@ public class HomeHorAdapter extends RecyclerView.Adapter<HomeHorAdapter.ViewHold
 
                     if(position == 0)
                     {
-                        ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
-                        homeVerModels.add( new HomeVerModel(R.drawable.pizza1,"Capriciosa","10:00 - 23:00", "Min - $28"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.pizza2,"Quatro Stagioni","10:00 - 23:00", "Min - $35"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.pizza3,"Pizza Casei","10:00 - 23:00", "Min - $30"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.pizza4,"Prosciutto e Funghi","10:00 - 23:00", "Min - $29"));
+                        UpdateModelList("pizza");
 
                         updateVerticalRec.callBack(position,homeVerModels);
                     }
                     else if(position == 1)
                     {
-                        ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
-                        homeVerModels.add( new HomeVerModel(R.drawable.burgers1,"Salsa Burger","10:00 - 23:00", "Min - $40"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.burgers2,"Home Burger","10:00 - 23:00", "Min - $37"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.burgers3,"Dublu Cheeseburger","10:00 - 23:00", "Min - $35"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.burgers4,"Traditional Burger","10:00 - 23:00", "Min - $36"));
-
+                        UpdateModelList("burgers");
                         updateVerticalRec.callBack(position,homeVerModels);
                     }
                     else if(position == 2)
                     {
-                        ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
-                        homeVerModels.add( new HomeVerModel(R.drawable.fries1,"French fries with salt","10:00 - 23:00", "Min - $10"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.fries2,"French fries with garlic","10:00 - 23:00", "Min - $15"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.fries3,"French fries with parmesan","10:00 - 23:00", "Min - $12"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.fries4,"Wedges fries","10:00 - 23:00", "Min - $10"));
-
+                        UpdateModelList("fries");
                         updateVerticalRec.callBack(position,homeVerModels);
                     }
                     else if(position == 3)
                     {
-                        ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
-                        homeVerModels.add( new HomeVerModel(R.drawable.icecream1,"Nuts Ice Cream","10:00 - 23:00", "Min - $12"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.icecream2,"Vanilla Ice Cream","10:00 - 23:00", "Min - $10"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.icecream3,"Chocolate Ice Cream","10:00 - 23:00", "Min - $6"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.icecream4,"Oreo Ice Cream","10:00 - 23:00", "Min - $12"));
-
+                        UpdateModelList("icecream");
                         updateVerticalRec.callBack(position,homeVerModels);
                     }
                     else if(position == 4)
                     {
-                        ArrayList<HomeVerModel> homeVerModels = new ArrayList<>();
-                        homeVerModels.add( new HomeVerModel(R.drawable.sandwich1,"Vegan Quesadilla","10:00 - 23:00", "Min - $30"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.sandwich2,"Chicken Quesadilla","10:00 - 23:00", "Min - $32"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.sandwich3,"Bagel with scrumble eggs, prosciutto and cheddar","10:00 - 23:00", "Min - $35"));
-                        homeVerModels.add( new HomeVerModel(R.drawable.sandwich4,"Croissant with ham and vegetables","10:00 - 23:00", "Min - $35"));
-
+                        UpdateModelList("sandwich");
                         updateVerticalRec.callBack(position,homeVerModels);
                     }
 

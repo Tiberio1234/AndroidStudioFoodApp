@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import DBconnection.Queries;
 
@@ -27,14 +28,33 @@ public class DetailedDailyMealActivity extends AppCompatActivity {
     List<DetailedDailyModel> detailedDailyModelList;
     DetailedDailyAdapter dailyAdapter;
     ImageView imageView;
+    List<DetailedDailyModel> meals = null;
 
     public List<Integer> getDrawablesList(int nrOfPictures, String nameOfPictures, String whereToSearch)  {
 
         List<Integer> drawables = new ArrayList<>();
         for(int i=1;i<=nrOfPictures;i++)
-            drawables.add(getResources().getIdentifier("breakfast"+i,"drawable",getPackageName()));
+            drawables.add(getResources().getIdentifier(nameOfPictures+i,whereToSearch,getPackageName()));
 
         return drawables;
+    }
+
+    private void UpdateModelList(String type)
+    {
+        List<DetailedDailyModel> mealsOfType;
+        List<Integer> picturesId;
+
+        mealsOfType= meals.stream()
+                .filter(meal -> type.equalsIgnoreCase(meal.getType()))
+                .collect(Collectors.toList());
+
+        picturesId = getDrawablesList(mealsOfType.size(),type,"drawable");
+
+        int pictureNR=0;
+        for(int i=0; i<mealsOfType.size();i++) {
+            mealsOfType.get(i).setImage(picturesId.get(pictureNR++));
+            detailedDailyModelList.add(mealsOfType.get(i));
+        }
     }
 
     @Override
@@ -51,12 +71,10 @@ public class DetailedDailyMealActivity extends AppCompatActivity {
         dailyAdapter = new DetailedDailyAdapter(detailedDailyModelList);
         recyclerView.setAdapter(dailyAdapter);
 
-        List<Integer> picturesId;
-        long numberOfPictures;
         //TODO: refactorizare Queries
         Queries queries = new Queries();
         Future<Vector<DetailedDailyModel>> meals_future;
-        Vector<DetailedDailyModel> meals = null;
+
         try {
             meals_future = queries.GetDailyMeals();
 
@@ -68,52 +86,35 @@ public class DetailedDailyMealActivity extends AppCompatActivity {
         if(type != null && type.equalsIgnoreCase("breakfast")  )
         {
             imageView.setImageResource(R.drawable.breakfast);
-            numberOfPictures= meals.stream()
-                    .filter(meal -> "breakfast".equalsIgnoreCase(meal.getType()))
-                    .count();
-            picturesId = getDrawablesList((int)numberOfPictures,"breakfast","drawable");
-
-            for(int i=0; i<picturesId.size();i++)
-            {
-                meals.elementAt(i).setImage(picturesId.get(i));
-                detailedDailyModelList.add(meals.elementAt(i));
-            }
+            UpdateModelList("breakfast");
             dailyAdapter.notifyDataSetChanged();
         }
 
         if(type != null && type.equalsIgnoreCase("lunch"))
         {
             imageView.setImageResource(R.drawable.lunch);
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.lunch1,"Lunch","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.lunch2,"Lunch","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.lunch3,"Lunch","description","4.4","40","10am to 9pm"));
+            UpdateModelList("lunch");
             dailyAdapter.notifyDataSetChanged();
         }
 
         if(type != null && type.equalsIgnoreCase("dinner"))
         {
             imageView.setImageResource(R.drawable.dinner);
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.dinner1,"Dinner","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.dinner2,"Dinner","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.dinner3,"Dinner","description","4.4","40","10am to 9pm"));
+            UpdateModelList("dinner");
             dailyAdapter.notifyDataSetChanged();
         }
 
         if(type != null && type.equalsIgnoreCase("sweets"))
         {
             imageView.setImageResource(R.drawable.breakfast);
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.sweets1,"Sweets","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.sweets2,"Sweets","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.sweets3,"Sweets","description","4.4","40","10am to 9pm"));
+            UpdateModelList("sweets");
             dailyAdapter.notifyDataSetChanged();
         }
 
         if(type != null && type.equalsIgnoreCase("coffee"))
         {
             imageView.setImageResource(R.drawable.sweets);
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.coffee1,"Coffee","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.coffee2,"Coffee","description","4.4","40","10am to 9pm"));
-            detailedDailyModelList.add(new DetailedDailyModel(R.drawable.coffee3,"Coffee","description","4.4","40","10am to 9pm"));
+            UpdateModelList("coffee");
             dailyAdapter.notifyDataSetChanged();
         }
 

@@ -1,5 +1,6 @@
 package com.example.myfooapp.models;
 
+
 public class HomeVerModel {
 
     int image;
@@ -13,6 +14,7 @@ public class HomeVerModel {
         this.timing = timing;
         this.price = price;
     }
+
 
     public int getImage() {
         return image;
